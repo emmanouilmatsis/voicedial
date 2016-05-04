@@ -9,20 +9,32 @@ class Encoder:
         self._symbols =  "1", "2", "3", "A", "4", "5", "6", "B", "7", "8", "9", "C", "*", "0", "#", "D"
         self._frequencies = [[697,770,852,941], [1209, 1336, 1477, 1633]]
 
+    def _generator(self, frequency1, frequency2, stop):
+        time = 0
+        while time < stop:
+            yield (math.sin((2 * math.pi * frequency1 / self._sample_rate) * time) + math.sin((2 * math.pi * frequency2 / self._sample_rate) * time)) / 2
+            time += 1
+
     def tone(self, symbol = None):
         if symbol is None:
             return [0 for _ in range(self._sample_rate * self._duration // 1000)]
         else:
-            factor1 = 2 * math.pi * self._frequencies[0][self._symbols.index(symbol) // 4] / self._sample_rate
-            factor2 = 2 * math.pi * self._frequencies[1][self._symbols.index(symbol) % 4] / self._sample_rate
-            return [(math.sin(x * factor1) + math.sin(x * factor2)) / 2 for x in range(self._sample_rate * self._duration // 1000)]
+            return [sample for sample in self._generator(
+                self._frequencies[0][self._symbols.index(symbol) // 4],
+                self._frequencies[1][self._symbols.index(symbol) % 4],
+                self._sample_rate * self._duration // 1000)]
 
     def tones(self, symbols):
-        return [sample for symbol in symbols for tone in (self.tone(symbol), self.tone()) for sample in tone]
+        return [sample for symbol in symbols for type in [self._generator(
+            self._frequencies[0][self._symbols.index(symbol) // 4],
+            self._frequencies[1][self._symbols.index(symbol) % 4],
+            self._sample_rate * self._duration // 1000),
+            [0] * (self._sample_rate * self._duration // 1000)]
+            for sample in type]
 
 
 if __name__ == "__main__":
-
-    encoder = Encoder(duration = 1000, sample_rate = 4)
+    encoder = Encoder(duration = 30, sample_rate = 44000)
     data = encoder.tones("123A456B789C*0#D")
     print(data)
+

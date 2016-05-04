@@ -1,4 +1,8 @@
-import struct
 
-def binary(num):
-    return ''.join(bin(c).replace('0b', '').rjust(8, '0') for c in struct.pack('!f', num))
+def gen(stop = 0):
+    while stop < 4:
+        yield 0
+        stop += 1
+
+for x in gen():
+    print(x)

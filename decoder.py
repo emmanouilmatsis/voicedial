@@ -1,37 +1,18 @@
 import speech_recognition
 
 
-DURATION = 2
-LANGUAGE = "el-gr"
-ENGINE = "google"
+class Decoder:
 
+    def __init__(self, language = None, engine = None):
+        self._language = "el-gr" if language is None else language
+        self._language = "google" if language is None else language
+        self._engine = speech_recognition.Recognizer()
 
-def record():
-    print("Recording...")
-    with speech_recognition.Microphone() as audio_source:
-        audio = speech_recognition.Recognizer().record(audio_source, duration = DURATION)
-    return audio
-
-def decode(audio):
-    print("Recognizing...")
-    try:
-        text = getattr(speech_recognition.Recognizer(), "recognize_" + ENGINE)(audio, language = LANGUAGE)
-    except speech_recognition.UnknownValueError as e:
-        print(e)
-    except speech_recognition.RequestError as e:
-        print(e)
-    else:
-        return text
-
-def encode(text):
-    pass
-
-def play(audio):
-    print("Playing...")
-    print(audio)
+    def decode(self, audio):
+        return getattr(speech_recognition.Recognizer(), "recognize_" + self._engine)(audio, language = self._language)
 
 
 if __name__ == "__main__":
-
-    #play(encode(decode(record())))
-    print(decode(record()))
+    import recorder
+    decoder = Decoder(language = "el-gr", engine = "google")
+    print(decoder.decode(recorder.Recorder(duration = 2).record()))

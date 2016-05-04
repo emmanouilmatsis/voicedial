@@ -1,35 +1,30 @@
+import struct
 import pyaudio
 
 
 class Player:
 
-    def __init__(self):
-        self._pyaudio = pyaudio.PyAudio()
-
-    def record(self):
-        pass
+    def __init__(self, sample_rate = None):
+        self._sample_rate = 44000 if sample_rate is None else sample_rate
 
     def play(self, data):
-        RATE = 16000
+        audio = pyaudio.PyAudio()
+
+        stream = audio.open(
+                format = pyaudio.paInt8,
+                channels = 1,
+                rate = self._sample_rate,
+                output = True)
+
         for value in data:
-            a = ''.join(value)
-
-            stream = self._pyaudio.open(
-                    format = self._pyaudio.get_format_from_width(1),
-                    channels = 1,
-                    rate = RATE,
-                    output = True)
-
-            for DISCARD in range(5):
-                stream.write(a)
+            stream.write(struct.pack("b", int(value * 127)))
 
         stream.stop_stream()
         stream.close()
-        p.terminate()
+        audio.terminate()
 
 
 if __name__ == "__main__":
     import encoder
-
-    player = Player()
-    player.play(encoder.Encoder(duration = 1000).tones("123"))
+    player = Player(sample_rate = 44000)
+    player.play(encoder.Encoder(sample_rate = 44000, duration = 40).tones("123"))

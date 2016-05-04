@@ -66,6 +66,7 @@ def save_au(fname, samples, sample_rate, vol):
     fout.write(".snd" + pack(">5L", 24, nsamples, 2, sample_rate, 1))
     for y in samples:
         fout.write(pack("b", vol * 127 * y))
+        print(int(127*y))
     fout.close()
 
 def main():
