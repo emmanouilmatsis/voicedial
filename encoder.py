@@ -15,16 +15,7 @@ class Encoder:
             yield (math.sin((2 * math.pi * frequency1 / self._sample_rate) * time) + math.sin((2 * math.pi * frequency2 / self._sample_rate) * time)) / 2
             time += 1
 
-    def tone(self, symbol = None):
-        if symbol is None:
-            return [0 for _ in range(self._sample_rate * self._duration // 1000)]
-        else:
-            return [sample for sample in self._generator(
-                self._frequencies[0][self._symbols.index(symbol) // 4],
-                self._frequencies[1][self._symbols.index(symbol) % 4],
-                self._sample_rate * self._duration // 1000)]
-
-    def tones(self, symbols):
+    def encode(self, symbols):
         return [sample for symbol in symbols for type in [self._generator(
             self._frequencies[0][self._symbols.index(symbol) // 4],
             self._frequencies[1][self._symbols.index(symbol) % 4],
@@ -35,6 +26,6 @@ class Encoder:
 
 if __name__ == "__main__":
     encoder = Encoder(duration = 30, sample_rate = 44000)
-    data = encoder.tones("123A456B789C*0#D")
+    data = encoder.encode("123A456B789C*0#D")
     print(data)
 

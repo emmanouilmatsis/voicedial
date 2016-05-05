@@ -1,3 +1,4 @@
+import io
 import speech_recognition
 
 
@@ -9,9 +10,23 @@ class Recorder:
         self._recognizer = speech_recognition.Recognizer()
 
     def record(self):
+        input("Press enter to start recording and ctrl-c to stop recording.")
+
+        frames = io.BytesIO()
+
         with self._audio_source as audio_source:
-            audio = self._recognizer.record(audio_source, duration = self._duration)
-        return audio
+            try:
+                while True:
+                    buffer = audio_source.stream.read(audio_source.CHUNK)
+                    if len(buffer) == 0: break
+                    frames.write(buffer)
+            except KeyboardInterrupt:
+                print()
+
+        frame_data = frames.getvalue()
+        frames.close()
+
+        return speech_recognition.AudioData(frame_data, audio_source.SAMPLE_RATE, audio_source.SAMPLE_WIDTH)
 
 
 if __name__ == "__main__":

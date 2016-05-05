@@ -5,8 +5,7 @@ class Decoder:
 
     def __init__(self, language = None, engine = None):
         self._language = "el-gr" if language is None else language
-        self._language = "google" if language is None else language
-        self._engine = speech_recognition.Recognizer()
+        self._engine = "google" if engine is None else engine
 
     def decode(self, audio):
         return getattr(speech_recognition.Recognizer(), "recognize_" + self._engine)(audio, language = self._language)
