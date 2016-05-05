@@ -9,11 +9,11 @@ def main():
     print("Audio is recorded.")
 
     text = decoder.Decoder().decode(audio)
-    print("Audio is decoded.")
+    print("Audio is decoded. ({})".format(text))
 
     assert any((character in "123A456B789C*0#D") for character in text), "{}: Text is not valid.".format(text)
     audio = encoder.Encoder().encode(text)
-    print("Text is encoded. ({})".format(text))
+    print("Text is encoded.")
 
     player.Player().play(audio)
     print("Audio is played.")
